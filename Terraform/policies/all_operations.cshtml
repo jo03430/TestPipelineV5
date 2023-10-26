@@ -1,0 +1,24 @@
+<policies>
+    <inbound>
+        <base />
+        <!-- Example standar policy using Inbound-OAuth fragment -->
+        <set-backend-service backend-id="CHANGE ME" />
+        <set-variable name="api-client-id" value="{{CHANGE ME}}" />
+        <set-variable name="api-scope" value="{{CHANGE ME}}" />
+        <set-variable name="api-role" value="access" />
+        <!-- Policy Fragment -->
+        <include-fragment fragment-id="Inbound-OAuth" />
+        <!-- Removal of unnecessary headers to the backend -->
+        <set-header name="client-id" exists-action="delete" />
+        <set-header name="client-secret" exists-action="delete" />
+    </inbound>
+    <backend>
+        <base />
+    </backend>
+    <outbound>
+        <base />
+    </outbound>
+    <on-error>
+        <base />
+    </on-error>
+</policies>
