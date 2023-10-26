@@ -1,0 +1,313 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "HttpLogging-Schema",
+  "title": "Http Logging",
+  "description": "Configuration used for HttpLogging Middleware",
+  "type": "object",
+  "properties": {
+    "HttpLogging": {
+      "type": "object",
+      "properties": {
+        "Request": {
+          "type": "object",
+          "title": "Request logging options",
+          "description": "Log settings for requests",
+          "properties": {
+            "MaxLogSize": {
+              "type": "integer",
+              "description": "Max log size for both request, overridden if max log size set at RequestResponseLogging root"
+            },
+            "All": {
+              "type": "boolean",
+              "description": "Flag for logging the entire HTTP Request. Includes RequestPropertiesAndHeaders and RequestBody. Logging the request body has performance implications, as it requires buffering the entire request body up to RequestBodyLogLimit.",
+              "default": false
+            },
+            "Path": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Path, which includes both the Path and PathBase. For example: Path: /index PathBase: /app",
+              "default": false
+            },
+            "Body": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Body. Logging the request body has performance implications, as it requires buffering the entire request body up to RequestBodyLogLimit.",
+              "default": false
+            },
+            "Method": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Method. For example: Method: GET",
+              "default": false
+            },
+            "Query": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request QueryString. For example: Query: ?index=1 RequestQuery contents can contain private information which may have regulatory concerns under GDPR and other laws. RequestQuery should not be logged unless logs are secure and access controlled and the privacy impact assessed.",
+              "default": false
+            },
+            "Headers": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Headers. Request Headers are logged as soon as the middleware is invoked. Headers are redacted by default with the character '[Redacted]' unless specified in the RequestHeaders. For example: Connection: keep-alive My-Custom-Request-Header: [Redacted]",
+              "default": false
+            },
+            "Properties": {
+              "type": "boolean",
+              "description": "Flag for logging a collection of HTTP Request properties, including RequestPath, RequestProtocol, RequestMethod, and RequestScheme.",
+              "default": false
+            },
+            "PropertiesAndHeaders": {
+              "type": "boolean",
+              "description": "Flag for logging HTTP Request properties and headers. Includes RequestProperties and RequestHeaders",
+              "default": false
+            },
+            "Protocol": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Protocol. For example: Protocol: HTTP/1.1",
+              "default": false
+            },
+            "Scheme": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Scheme. For example: Scheme: https",
+              "default": false
+            },
+            "Trailers": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Request Trailers. Request Trailers are currently not logged.",
+              "default": false
+            },
+            "MaxLogBodySize": {
+              "type": "integer",
+              "description": "Max log set that sets the limit in bytes for request bodies.",
+              "default": 32
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "All"
+              ]
+            },
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "Path"
+                  ]
+                },
+                {
+                  "required": [
+                    "Body"
+                  ]
+                },
+                {
+                  "required": [
+                    "Method"
+                  ]
+                },
+                {
+                  "required": [
+                    "Query"
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "Properties"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "Headers"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "required": [
+                        "PropertiesAndHeaders"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "Protocol"
+                  ]
+                },
+                {
+                  "required": [
+                    "Scheme"
+                  ]
+                },
+                {
+                  "required": [
+                    "Trailers"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Response": {
+          "type": "object",
+          "title": "Response logging options",
+          "description": "Logging options for responses",
+          "properties": {
+            "All": {
+              "type": "boolean",
+              "description": "Flag for logging the entire HTTP Response. Includes ResponsePropertiesAndHeaders and ResponseBody. Logging the response body has performance implications, as it requires buffering the entire response body up to ResponseBodyLogLimit.",
+              "default": false
+            },
+            "Body": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Response Body. Logging the response body has performance implications, as it requires buffering the entire response body up to ResponseBodyLogLimit."
+            },
+            "StatusCode": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Response StatusCode. For example: StatusCode: 200",
+              "default": false
+            },
+            "Headers": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Response Headers. Response Headers are logged when the Body is written to or when StartAsync(CancellationToken) is called. Headers are redacted by default with the character '[Redacted]' unless specified in the ResponseHeaders.\n\nFor example: Content-Length: 16 My-Custom-Response-Header: [Redacted]"
+            },
+            "PropertiesAndHeaders": {
+              "type": "boolean",
+              "description": "Flag for logging HTTP Response properties and headers. Includes ResponseStatusCode and ResponseHeaders",
+              "default": false
+            },
+            "Trailers": {
+              "type": "boolean",
+              "description": "Flag for logging the HTTP Response Trailers. Response Trailers are currently not logged.",
+              "default": false
+            },
+            "DefaultContentTypes": {
+              "type": "boolean",
+              "description": "Indicates if the default content types with HttpLoggingOptions should be used, if false they will be cleared",
+              "default": true
+            },
+            "ContentTypes": {
+              "type": "array",
+              "description": "List of content information, content type and the encoding to be used with the given content type.\n\nSupports wildcards, Example: 'application/*'",
+              "items": {
+                "type": "object",
+                "title": "ContentTypeInfo",
+                "description": "ContentType and encoding",
+                "properties": {
+                  "ContentType": {
+                    "type": "string",
+                    "description": "ContentType, supports wildcards (application/*)"
+                  },
+                  "Encoding": {
+                    "type": "string",
+                    "description": "Encoding to be used with associated content type(s)"
+                  }
+                },
+                "required": [
+                  "ContentType"
+                ],
+                "uniqueItems": true
+              }
+            },
+            "MaxLogBodySize": {
+              "type": "integer",
+              "description": "Max log set that sets the limit in bytes for response bodies.",
+              "default": 32
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "All"
+              ]
+            },
+            {
+              "anyOf": [
+                {
+                  "required": [
+                    "Body"
+                  ]
+                },
+                {
+                  "required": [
+                    "StatusCode"
+                  ]
+                },
+                {
+                  "oneOf": [
+                    {
+                      "anyOf": [
+                        {
+                          "required": [
+                            "Properties"
+                          ]
+                        },
+                        {
+                          "required": [
+                            "Headers"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "required": [
+                        "PropertiesAndHeaders"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "required": [
+                    "Trailers"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "RequestHeaders": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string",
+              "description": "Name of request header whose value is to be logged"
+            }
+          ],
+          "uniqueItems": true
+        },
+        "ResponseHeaders": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string",
+              "description": "Name of response header whose value is to be logged"
+            }
+          ],
+          "uniqueItems": true
+        },
+        "MaxBodyLogSize": {
+          "type": "integer",
+          "description": "Max log set that sets the limit in bytes for both request and response bodies.\n\nOverrides size set in request or response settings",
+          "default": 32
+        },
+        "ShowDefaultHeaders": {
+          "type": "boolean",
+          "description": "States whether default headers in HttpLoggingOptions are to be used when logging header values.\n\nIf false clears default headers.",
+          "default": true
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "Request"
+          ]
+        },
+        {
+          "required": [
+            "Response"
+          ]
+        }
+      ]
+    }
+  }
+}
